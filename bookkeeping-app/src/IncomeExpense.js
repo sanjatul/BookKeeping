@@ -18,16 +18,15 @@ const IncomeExpense = () => {
     fetchData();
   }, []);
 
-  // Filter income data from the 'data' array
   const incomeData = data.filter((item) => item.type === 1);
+  const costData = data.filter((item) => item.type === 2);
 
-  // Create an array to hold income values for each month
   const incomeByMonth = new Array(12).fill(0);
+  const costByMonth = new Array(12).fill(0);
 
-  // Create an array to hold cumulative income values
   const cumulativeIncome = new Array(12).fill(0);
+  const cumulativeCost = new Array(12).fill(0);
 
-  // Populate the income values by month and calculate cumulative income
   incomeData.forEach((item) => {
     const monthIndex = parseInt(item.yearMonth.split("-")[1]) - 1;
     incomeByMonth[monthIndex] += item.amount;
@@ -37,6 +36,19 @@ const IncomeExpense = () => {
       cumulativeIncome[monthIndex] = cumulativeIncome[monthIndex - 1] + incomeByMonth[monthIndex];
     }
   });
+
+  costData.forEach((item) => {
+    const monthIndex = parseInt(item.yearMonth.split("-")[1]) - 1;
+    costByMonth[monthIndex] += item.amount;
+    if (monthIndex === 0) {
+      cumulativeCost[monthIndex] = costByMonth[monthIndex];
+    } else {
+      cumulativeCost[monthIndex] = cumulativeCost[monthIndex - 1] + costByMonth[monthIndex];
+    }
+  });
+
+  // Calculate the "Result" row by subtracting cost from income for each month
+  const resultByMonth = incomeByMonth.map((income, index) => income - costByMonth[index]);
 
   return (
     <div>
@@ -70,6 +82,24 @@ const IncomeExpense = () => {
             <td>Cumulative Income</td>
             {cumulativeIncome.map((cumulative, index) => (
               <td key={index}>{cumulative}</td>
+            ))}
+          </tr>
+          <tr>
+            <td>Cost</td>
+            {costByMonth.map((cost, index) => (
+              <td key={index}>{cost}</td>
+            ))}
+          </tr>
+          <tr>
+            <td>Cumulative Cost</td>
+            {cumulativeCost.map((cumulative, index) => (
+              <td key={index}>{cumulative}</td>
+            ))}
+          </tr>
+          <tr>
+            <td>Result</td>
+            {resultByMonth.map((result, index) => (
+              <td key={index}>{result}</td>
             ))}
           </tr>
         </tbody>
