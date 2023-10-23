@@ -65,9 +65,7 @@ namespace BookKeeping.API.Controllers
                          on incomeOrExpense.IncomeOrExpenseTypeId equals incomeOrExpenseType.Id
                          select new IncomeExpenseDto
                          {
-                             Id = incomeOrExpense.Id,
                              YearMonth = (DateTime)incomeOrExpense.YearMonth,
-                             IncomeOrExpenseTypeId = incomeOrExpenseType.Id,
                              Type = incomeOrExpenseType.Type,
                              Amount = incomeOrExpense.Amount
                          };
