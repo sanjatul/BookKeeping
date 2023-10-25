@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-const IncomeExpense = () => {
+const IncomeExpense = ({onResultByMonthChange}) => {
   const [data, setData] = useState([]);
+  const [monthData, setMonthData] = useState([])
 
   const fetchData = async () => {
     try {
@@ -13,6 +14,10 @@ const IncomeExpense = () => {
       console.error("Error fetching data:", error);
     }
   };
+
+ 
+
+
 
   useEffect(() => {
     fetchData();
@@ -49,57 +54,85 @@ const IncomeExpense = () => {
 
   // Calculate the "Result" row by subtracting cost from income for each month
   const resultByMonth = incomeByMonth.map((income, index) => income - costByMonth[index]);
+  
+  const prevResult = useRef(resultByMonth)
+
+  function areArraysEqual(arr1, arr2) {
+    if (arr1.length !== arr2.length) {
+      return false;
+    }
+  
+    for (let i = 0; i < arr1.length; i++) {
+      if (Array.isArray(arr1[i]) && Array.isArray(arr2[i])) {
+        if (!areArraysEqual(arr1[i], arr2[i])) {
+          return false;
+        }
+      } else if (arr1[i] !== arr2[i]) {
+        return false;
+      }
+    }
+  
+    return true;
+  }
+  
+
+  useEffect(()=>{
+    if(!areArraysEqual(resultByMonth,prevResult.current)){
+      onResultByMonthChange(resultByMonth)
+      prevResult.current=resultByMonth
+    }
+  },[resultByMonth,onResultByMonthChange])
 
   return (
     <div>
-      <table border="1">
-        <caption><b>Year 2021</b></caption>
+      <table style={{ border: "1px solid black" }}>
+        <caption style={{ border: "1px solid black" }}><b>Year 2021</b></caption>
         <thead>
           <tr>
-            <th>Month</th>
-            <th>January</th>
-            <th>February</th>
-            <th>March</th>
-            <th>April</th>
-            <th>May</th>
-            <th>June</th>
-            <th>July</th>
-            <th>August</th>
-            <th>September</th>
-            <th>October</th>
-            <th>November</th>
-            <th>December</th>
+            <th style={{ border: "1px solid black", width: "70px" }}></th>
+            <th style={{ border: "1px solid black", width: "70px" }}>January</th>
+            <th style={{ border: "1px solid black", width: "70px" }}>February</th>
+            <th style={{ border: "1px solid black", width: "70px" }}>March</th>
+            <th style={{ border: "1px solid black", width: "70px" }}>April</th>
+            <th style={{ border: "1px solid black", width: "70px" }}>May</th>
+            <th style={{ border: "1px solid black", width: "70px" }}>June</th>
+            <th style={{ border: "1px solid black", width: "70px" }}>July</th>
+            <th style={{ border: "1px solid black", width: "70px" }}>August</th>
+            <th style={{ border: "1px solid black", width: "70px" }}>September</th>
+            <th style={{ border: "1px solid black", width: "70px" }}>October</th>
+            <th style={{ border: "1px solid black", width: "70px" }}>November</th>
+            <th style={{ border: "1px solid black", width: "70px" }}>December</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Income</td>
+            <td style={{ width: "70px", border: "1px solid black" }}><b>Income</b></td>
             {incomeByMonth.map((income, index) => (
-              <td key={index}>{income}</td>
+              <td style={{ width: "70px", border: "1px solid black" }} key={index}>{income}</td>
             ))}
           </tr>
           <tr>
-            <td>Cumulative Income</td>
+            <td style={{ width: "70px", border: "1px solid black" }}><b>Cumulative Income</b></td>
             {cumulativeIncome.map((cumulative, index) => (
-              <td key={index}>{cumulative}</td>
+              <td style={{ width: "70px", border: "1px solid black" }} key={index}>{cumulative}</td>
             ))}
           </tr>
           <tr>
-            <td>Cost</td>
+            <td style={{ width: "70px", border: "1px solid black" }}><b>Cost</b></td>
             {costByMonth.map((cost, index) => (
-              <td key={index}>{cost}</td>
+              <td style={{ width: "70px", border: "1px solid black" }} key={index}>{cost}</td>
             ))}
           </tr>
           <tr>
-            <td>Cumulative Cost</td>
+            <td style={{ width: "70px", border: "1px solid black" }}><b>Cumulative Cost</b></td>
             {cumulativeCost.map((cumulative, index) => (
-              <td key={index}>{cumulative}</td>
+              <td style={{ width: "70px", border: "1px solid black" }} key={index}>{cumulative}</td>
             ))}
           </tr>
           <tr>
-            <td>Result</td>
+            <td style={{ width: "70px", border: "1px solid black" }}><b>Result</b></td>
             {resultByMonth.map((result, index) => (
-              <td key={index}>{result}</td>
+              <td style={{ width: "70px", border: "1px solid black" }} key={index}>{result}</td>
             ))}
           </tr>
         </tbody>

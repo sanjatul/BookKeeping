@@ -1,7 +1,6 @@
 ﻿using BookKeeping.API.Data.Access;
 using BookKeeping.API.Models.Dtos;
 using BookKeeping.API.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -72,6 +71,14 @@ namespace BookKeeping.API.Controllers
 
             List<IncomeExpenseDto> incomeExpenseData = result.ToList();
             return Ok(incomeExpenseData);
+        }
+
+        [HttpGet] 
+        [Route("CreateBookKeepingData")]
+        public async Task<IActionResult> CreateBookKeepingData([FromBody] CreateBookKeepingData data)
+        {
+
+            return Ok(data);
         }
     }
 }
