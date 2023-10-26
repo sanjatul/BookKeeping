@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 const Reconciliation = ({ resultByMonth }) => {
-  //console.log(resultByMonth);
+  console.log(resultByMonth);
   const [data, setData] = useState([]);
   const [tableData, setTableData] = useState([]);
 
@@ -47,12 +47,27 @@ const Reconciliation = ({ resultByMonth }) => {
   }, [data]);
 
  
+  const stringifyData = (data) => {
+    // Helper function to recursively stringify all values in the data object
+    for (const key in data) {
+      if (typeof data[key] === "object") {
+        stringifyData(data[key]);
+      } else {
+        data[key] = String(data[key]);
+      }
+    }
+    return data;
+  };
+  
   const handleEdit = (updatedData) => {
+    // Convert all values to strings
+    const stringifiedData = stringifyData(updatedData);
+  
     // Handle the edited data here
-    console.log("Edited Data:", updatedData);
+    console.log("Edited Data (Stringified):", stringifiedData);
   
     // Assuming you have the axios instance set up, you can send a POST request
-    axios.post("https://localhost:7151/api/Base/CreateBookKeepingData", JSON.stringify(updatedData), {
+    axios.post("https://localhost:7151/api/Base/CreateBookKeepingData", stringifiedData, {
       headers: {
         "Content-Type": "application/json",
       }
@@ -89,6 +104,10 @@ const Reconciliation = ({ resultByMonth }) => {
       reconciliationResult[index] += item.type === 1 ? value : -value;
     });
   });
+// Calculate the total reconciliation result by adding reconciliationResult and resultByMonth
+const totalResult = reconciliationResult.map((result, index) => result + resultByMonth[index]);
+//Calculate the cumulative final result by summing up the "Final Result" values.
+const cumulativeFinalResult = totalResult.reduce((acc, result) => acc + result, 0);
 
   const renderTable = () => {
     if (data.length === 0) {
@@ -105,7 +124,7 @@ const Reconciliation = ({ resultByMonth }) => {
           <tbody>
             {Object.values(tableData).map((item) => (
               <tr key={item.id}>
-                <td style={{ width: "70px", border: "1px solid black" }}>
+                <td style={{ width: "74px", border: "1px solid black" }}>
                   {item.type === 1 ? "Income" : "Expense"}
                 </td>
                 <td style={{ width: "70px", border: "1px solid black" }}>
@@ -151,6 +170,31 @@ const Reconciliation = ({ resultByMonth }) => {
                 </td>
               ))}
             </tr>
+               {/* Final Result Row */}
+          <tr>
+            <td style={{ width: "70px", border: "1px solid black" }}>
+            </td>
+            <td style={{ width: "70px", border: "1px solid black" }}>
+              Final Result
+            </td>
+            {totalResult.map((result, index) => (
+              <td style={{ width: "70px", border: "1px solid black" }} key={index}>
+                {result}
+              </td>
+            ))}
+          </tr>
+          <tr>
+            <td style={{ width: "70px", border: "1px solid black" }}>
+            </td>
+            <td style={{ width: "70px", border: "1px solid black" }}>
+              Cumulative Final Result
+            </td>
+            {Array(12).fill(0).map((result, index) => (
+              <td style={{ width: "70px", border: "1px solid black" }} key={index}>
+                {cumulativeFinalResult}
+              </td>
+            ))}
+          </tr>
           </tbody>
         </table>
       </div>
