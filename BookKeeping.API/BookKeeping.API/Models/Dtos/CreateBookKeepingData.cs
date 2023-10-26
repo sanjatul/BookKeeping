@@ -2,8 +2,9 @@
 {
     public class CreateBookKeepingData
     {
-        public string YearMonth { get; set; }
+        public int Id {  get; set; }
+        public int YearMonth { get; set; }
         public int IncomeOrExpenseTypeId { get; set; }
-        public decimal Amount { get; set; }
+        public string Amount { get; set; }
     }
 }

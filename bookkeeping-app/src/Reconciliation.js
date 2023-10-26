@@ -1,10 +1,10 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const Reconciliation = ({resultByMonth}) => {
-  console.log(resultByMonth)
+const Reconciliation = ({ resultByMonth }) => {
+  //console.log(resultByMonth);
   const [data, setData] = useState([]);
+  const [tableData, setTableData] = useState([]);
 
   const fetchData = async () => {
     try {
@@ -20,48 +20,80 @@ const Reconciliation = ({resultByMonth}) => {
     fetchData();
   }, []);
 
-  // Organize the data by incomeOrExpenseTypeId and month
-  const tableData = {};
-  data.forEach((item) => {
-    if (!tableData[item.incomeOrExpenseTypeId]) {
-      tableData[item.incomeOrExpenseTypeId] = {
-        id: item.incomeOrExpenseTypeId,
-        type: item.type,
-        name: item.name,
-        months: Array(12).fill(0),
-      };
-    }
-    const month = new Date(item.yearMonth).getMonth(); // Extract the month index
-    tableData[item.incomeOrExpenseTypeId].months[month] = item.amount;
-  });
+  useEffect(() => {
+    // Organize the data by incomeOrExpenseTypeId and month
+    const newData = {};
+    data.forEach((item) => {
+      if (!newData[item.incomeOrExpenseTypeId]) {
+        newData[item.incomeOrExpenseTypeId] = {
+          id: item.incomeOrExpenseTypeId,
+          type: item.type,
+          name: item.name,
+          months: Array(12).fill(0),
+        };
+      }
+      const month = new Date(item.yearMonth).getMonth(); // Extract the month index
+      newData[item.incomeOrExpenseTypeId].months[month] = item.amount;
+    });
 
-  // Ensure that items with no associated id have id set to 0
-  Object.values(tableData).forEach((item) => {
-    if (!item.id) {
-      item.id = 0;
+    // Ensure that items with no associated id have id set to 0
+    Object.values(newData).forEach((item) => {
+      if (!item.id) {
+        item.id = 0;
+      }
+    });
+
+    setTableData(newData);
+  }, [data]);
+
+ 
+  const handleEdit = (updatedData) => {
+    // Handle the edited data here
+    console.log("Edited Data:", updatedData);
+  
+    // Assuming you have the axios instance set up, you can send a POST request
+    axios.post("https://localhost:7151/api/Base/CreateBookKeepingData", JSON.stringify(updatedData), {
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+      .then((response) => {
+        console.log("POST request successful:", response);
+        // You can handle success, update state, or perform other actions here
+      })
+      .catch((error) => {
+        console.error("POST request failed:", error);
+        // Handle errors or display an error message to the user
+      });
+  };
+  
+
+  const handleInputKeyPress = (e, incomeOrExpenseTypeId, month, value, id) => {
+    if (e.key === "Enter") {
+      // Call the handleEdit method with the updated data
+      month=month+1;
+      handleEdit({
+        incomeOrExpenseTypeId,
+        month,
+        value,
+        id,
+      });
     }
+  };
+
+  // Calculate the sum of income and expenses for each month
+  const reconciliationResult = Array(12).fill(0);
+
+  Object.values(tableData).forEach((item) => {
+    item.months.forEach((value, index) => {
+      reconciliationResult[index] += item.type === 1 ? value : -value;
+    });
   });
 
   const renderTable = () => {
     if (data.length === 0) {
       return <div>Loading...</div>;
     }
-
-    const handleInputChange = (incomeOrExpenseTypeId, month, value, id) => {
-      // Handle the input change here
-      month=month+1;
-      console.log(`incomeOrExpenseTypeId: ${incomeOrExpenseTypeId}, month: ${month}, value: ${value}, id: ${id}`);
-    };
-
- // Calculate the sum of income and expenses for each month
- const reconciliationResult = Array(12).fill(0);
-
- Object.values(tableData).forEach((item) => {
-   item.months.forEach((value, index) => {
-     reconciliationResult[index] +=
-       item.type === 1 ? value : -value;
-   });
- });
 
     return (
       <div>
@@ -71,7 +103,6 @@ const Reconciliation = ({resultByMonth}) => {
           </caption>
           <thead></thead>
           <tbody>
-          
             {Object.values(tableData).map((item) => (
               <tr key={item.id}>
                 <td style={{ width: "70px", border: "1px solid black" }}>
@@ -86,26 +117,29 @@ const Reconciliation = ({resultByMonth}) => {
                       type="number"
                       value={value}
                       style={{ width: "70px" }}
-                      onChange={(e) =>
-                        handleInputChange(
-                          item.id,
-                          index,
-                          e.target.value,
-                          data.find(
-                            (itemData) =>
-                              itemData.incomeOrExpenseTypeId === item.id &&
-                              new Date(itemData.yearMonth).getMonth() === index
-                          )?.id || 0
-                        )
+                      onChange={(e) => {
+                        // Create a copy of the table data
+                        const updatedTableData = { ...tableData };
+
+                        // Update the value in the copy
+                        updatedTableData[item.id].months[index] = parseFloat(e.target.value);
+
+                        // Update the state with the updated data
+                        setTableData(updatedTableData);
+                      }}
+                      onKeyPress={(e) =>
+                        handleInputKeyPress(e, item.id, index, e.target.value, data.find((itemData) =>
+                          itemData.incomeOrExpenseTypeId === item.id &&
+                          new Date(itemData.yearMonth).getMonth() === index
+                        )?.id || 0)
                       }
                     />
                   </td>
                 ))}
               </tr>
-              
             ))}
-              {/* Reconciliation Result Row */}
-              <tr>
+            {/* Reconciliation Result Row */}
+            <tr>
               <td style={{ width: "70px", border: "1px solid black" }}>
               </td>
               <td style={{ width: "70px", border: "1px solid black" }}>
@@ -129,5 +163,4 @@ const Reconciliation = ({resultByMonth}) => {
 };
 
 export default Reconciliation;
-
 

@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {  useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 const IncomeExpense = ({onResultByMonthChange}) => {
   const [data, setData] = useState([]);
-  const [monthData, setMonthData] = useState([])
-
+ 
   const fetchData = async () => {
     try {
       const response = await axios.get("https://localhost:7151/api/Base/GetAllIncomeAndExpenses");
@@ -14,10 +13,6 @@ const IncomeExpense = ({onResultByMonthChange}) => {
       console.error("Error fetching data:", error);
     }
   };
-
- 
-
-
 
   useEffect(() => {
     fetchData();

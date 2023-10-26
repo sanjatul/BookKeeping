@@ -73,7 +73,7 @@ namespace BookKeeping.API.Controllers
             return Ok(incomeExpenseData);
         }
 
-        [HttpGet] 
+        [HttpPost] 
         [Route("CreateBookKeepingData")]
         public async Task<IActionResult> CreateBookKeepingData([FromBody] CreateBookKeepingData data)
         {
