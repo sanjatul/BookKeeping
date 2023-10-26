@@ -89,50 +89,56 @@ const IncomeExpense = ({onResultByMonthChange}) => {
         <caption style={{ border: "1px solid black" }}><b>Year 2021</b></caption>
         <thead>
           <tr>
-            <th style={{ border: "1px solid black", width: "70px" }}></th>
-            <th style={{ border: "1px solid black", width: "70px" }}>January</th>
-            <th style={{ border: "1px solid black", width: "70px" }}>February</th>
-            <th style={{ border: "1px solid black", width: "70px" }}>March</th>
-            <th style={{ border: "1px solid black", width: "70px" }}>April</th>
-            <th style={{ border: "1px solid black", width: "70px" }}>May</th>
-            <th style={{ border: "1px solid black", width: "70px" }}>June</th>
-            <th style={{ border: "1px solid black", width: "70px" }}>July</th>
-            <th style={{ border: "1px solid black", width: "70px" }}>August</th>
-            <th style={{ border: "1px solid black", width: "70px" }}>September</th>
-            <th style={{ border: "1px solid black", width: "70px" }}>October</th>
-            <th style={{ border: "1px solid black", width: "70px" }}>November</th>
-            <th style={{ border: "1px solid black", width: "70px" }}>December</th>
+           <th style={{ border: "1px solid black", width: "77px" }}></th>
+            <th style={{ border: "1px solid black", width: "78px" }}></th>
+            <th style={{ border: "1px solid black", width: "78px" }}>January</th>
+            <th style={{ border: "1px solid black", width: "78px" }}>February</th>
+            <th style={{ border: "1px solid black", width: "78px" }}>March</th>
+            <th style={{ border: "1px solid black", width: "78px" }}>April</th>
+            <th style={{ border: "1px solid black", width: "78px" }}>May</th>
+            <th style={{ border: "1px solid black", width: "78px" }}>June</th>
+            <th style={{ border: "1px solid black", width: "78px" }}>July</th>
+            <th style={{ border: "1px solid black", width: "78px" }}>August</th>
+            <th style={{ border: "1px solid black", width: "78px" }}>September</th>
+            <th style={{ border: "1px solid black", width: "78px" }}>October</th>
+            <th style={{ border: "1px solid black", width: "78px" }}>November</th>
+            <th style={{ border: "1px solid black", width: "78px" }}>December</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style={{ width: "70px", border: "1px solid black" }}><b>Income</b></td>
+          <th style={{ border: "1px solid black", width: "77px" }}></th>
+            <td style={{ width: "78px", border: "1px solid black" }}><b>Income</b></td>
             {incomeByMonth.map((income, index) => (
-              <td style={{ width: "70px", border: "1px solid black" }} key={index}>{income}</td>
+              <td style={{ width: "78px", border: "1px solid black" }} key={index}>{income}</td>
             ))}
           </tr>
           <tr>
-            <td style={{ width: "70px", border: "1px solid black" }}><b>Cumulative Income</b></td>
+          <th style={{ border: "1px solid black", width: "77px" }}></th>
+            <td style={{ width: "78px", border: "1px solid black" }}><b>Cumulative Income</b></td>
             {cumulativeIncome.map((cumulative, index) => (
-              <td style={{ width: "70px", border: "1px solid black" }} key={index}>{cumulative}</td>
+              <td style={{ width: "78px", border: "1px solid black" }} key={index}>{cumulative}</td>
             ))}
           </tr>
           <tr>
-            <td style={{ width: "70px", border: "1px solid black" }}><b>Cost</b></td>
+          <th style={{ border: "1px solid black", width: "77px" }}></th>
+            <td style={{ width: "78px", border: "1px solid black" }}><b>Cost</b></td>
             {costByMonth.map((cost, index) => (
-              <td style={{ width: "70px", border: "1px solid black" }} key={index}>{cost}</td>
+              <td style={{ width: "78px", border: "1px solid black" }} key={index}>{cost}</td>
             ))}
           </tr>
           <tr>
-            <td style={{ width: "70px", border: "1px solid black" }}><b>Cumulative Cost</b></td>
+          <th style={{ border: "1px solid black", width: "77px" }}></th>
+            <td style={{ width: "78px", border: "1px solid black" }}><b>Cumulative Cost</b></td>
             {cumulativeCost.map((cumulative, index) => (
-              <td style={{ width: "70px", border: "1px solid black" }} key={index}>{cumulative}</td>
+              <td style={{ width: "78px", border: "1px solid black" }} key={index}>{cumulative}</td>
             ))}
           </tr>
           <tr>
-            <td style={{ width: "70px", border: "1px solid black" }}><b>Result</b></td>
+          <th style={{ border: "1px solid black", width: "77px" }}></th>
+            <td style={{ width: "78px", border: "1px solid black" }}><b>Result</b></td>
             {resultByMonth.map((result, index) => (
-              <td style={{ width: "70px", border: "1px solid black" }} key={index}>{result}</td>
+              <td style={{ width: "78px", border: "1px solid black" }} key={index}>{result}</td>
             ))}
           </tr>
         </tbody>

@@ -7,14 +7,13 @@ function App() {
   const [resultByMonth, setResultByMonth] = useState([]);
 
   const handleResultByMonthChange = (resultData) => {
-    console.log(resultData);
     setResultByMonth(resultData);
   }
 
   return (
     <div className="App">
       <IncomeExpense onResultByMonthChange={handleResultByMonthChange} />
-      <Reconciliation />
+      <Reconciliation resultByMonth={resultByMonth}/>
     </div>
   );
 }
