@@ -78,15 +78,15 @@ namespace BookKeeping.API.Controllers
         public async Task<IActionResult> ModifyBookKeepingData([FromBody]CreateBookKeepingData data)
         {
 
-            if(data == null) { return NotFound(); }
+            if (data == null) { return NotFound(); }
             if (data.Id == 0)
             {
                 //For Creating
                 var bookkeeping = new Bookkeeping
                 {
-                    Id=data.Id,
-                    YearMonth= GenerateDate(data.Month),
-                    Amount =data.Amount,
+                    Id = data.Id,
+                    YearMonth = GenerateDate(data.Month),
+                    Amount = data.Amount,
                     IncomeOrExpenseTypeId = data.IncomeOrExpenseTypeId,
 
                 };
@@ -97,14 +97,15 @@ namespace BookKeeping.API.Controllers
             else
             {
                 //For Updating
-                var bookeeping =await _context.Bookkeeping.FirstOrDefaultAsync(x=>x.Id==data.Id);
-                if(bookeeping== null) return NotFound();
+                var bookeeping = await _context.Bookkeeping.FirstOrDefaultAsync(x => x.Id == data.Id);
+                if (bookeeping == null) return NotFound();
                 bookeeping.Amount = data.Amount;
                 _context.Bookkeeping.Update(bookeeping);
                 await _context.SaveChangesAsync();
                 return Ok(bookeeping);
-                
+
             }
+            return Ok(data);
         }
         public static DateTime GenerateDate(int month)
         {

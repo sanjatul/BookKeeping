@@ -4,7 +4,6 @@ import axios from "axios";
 const Reconciliation = ({ resultByMonth }) => {
   const [data, setData] = useState([]);
   const [tableData, setTableData] = useState([]);
-
   const fetchData = async () => {
     try {
       const response = await axios.get("https://localhost:7151/api/Base/GetAllBookKeepingData");
@@ -83,17 +82,24 @@ const Reconciliation = ({ resultByMonth }) => {
   
 
   const handleInputKeyPress = (e, incomeOrExpenseTypeId, month, amount, id) => {
-    if (e.key === "Enter") {
+  if (e.key === "Enter") {
+    // Check if the input value is not empty
+    if (amount.trim() !== "") {
       // Call the handleEdit method with the updated data
-      month=month+1;
+      month = month + 1;
       handleEdit({
         incomeOrExpenseTypeId,
         month,
         amount,
         id,
       });
+    } else {
+      // Optionally, you can provide feedback to the user that the input is empty.
+      console.log("Input field is empty. Please enter a valid value.");
     }
-  };
+  }
+};
+
 
   // Calculate the sum of income and expenses for each month
   const reconciliationResult = Array(12).fill(0);
@@ -105,31 +111,34 @@ const Reconciliation = ({ resultByMonth }) => {
   });
 // Calculate the total reconciliation result by adding reconciliationResult and resultByMonth
 const totalResult = reconciliationResult.map((result, index) => result + resultByMonth[index]);
-//Calculate the cumulative final result by summing up the "Final Result" values.
-const cumulativeFinalResult = totalResult.reduce((acc, result) => acc + result, 0);
 
   const renderTable = () => {
-    if (data.length === 0) {
-      return <div>Loading...</div>;
-    }
+  if (data.length === 0) {
+    return <div>Loading...</div>;
+  }
 
-    return (
-      <div>
-        <table style={{ border: "1px solid black" }}>
-          <caption style={{ border: "1px solid black" }}>
-            <b>Reconciliation</b>
-          </caption>
-          <thead></thead>
-          <tbody>
-            {Object.values(tableData).map((item) => (
-              <tr key={item.id}>
-                <td style={{ width: "74px", border: "1px solid black" }}>
-                  {item.type === 1 ? "Income" : "Expense"}
-                </td>
-                <td style={{ width: "70px", border: "1px solid black" }}>
-                  {item.name}
-                </td>
-                {item.months.map((value, index) => (
+  const cumulativeFinalResult = Array(12).fill(0);
+  
+  return (
+    <div>
+      <table style={{ border: "1px solid black" }}>
+        <caption style={{ border: "1px solid black" }}>
+          <b>Reconciliation</b>
+        </caption>
+        <thead></thead>
+        <tbody>
+          {Object.values(tableData).map((item) => (
+            <tr key={item.id}>
+              <td style={{ width: "74px", border: "1px solid black" }}>
+                {item.type === 1 ? "Income" : "Expense"}
+              </td>
+              <td style={{ width: "70px", border: "1px solid black" }}>
+                {item.name}
+              </td>
+              {item.months.map((value, index) => {
+                const cumulativeSum = item.type === 1 ? value : -value;
+                cumulativeFinalResult[index] += cumulativeSum;
+                return (
                   <td style={{ width: "70px", border: "1px solid black" }} key={index}>
                     <input
                       type="number"
@@ -153,23 +162,24 @@ const cumulativeFinalResult = totalResult.reduce((acc, result) => acc + result, 
                       }
                     />
                   </td>
-                ))}
-              </tr>
-            ))}
-            {/* Reconciliation Result Row */}
-            <tr>
-              <td style={{ width: "70px", border: "1px solid black" }}>
-              </td>
-              <td style={{ width: "70px", border: "1px solid black" }}>
-                Reconciliation Result
-              </td>
-              {reconciliationResult.map((result, index) => (
-                <td style={{ width: "70px", border: "1px solid black" }} key={index}>
-                  {result}
-                </td>
-              ))}
+                );
+              })}
             </tr>
-               {/* Final Result Row */}
+          ))}
+          {/* Reconciliation Result Row */}
+          <tr>
+            <td style={{ width: "70px", border: "1px solid black" }}>
+            </td>
+            <td style={{ width: "70px", border: "1px solid black" }}>
+              Reconciliation Result
+            </td>
+            {reconciliationResult.map((result, index) => (
+              <td style={{ width: "70px", border: "1px solid black" }} key={index}>
+                {result}
+              </td>
+            ))}
+          </tr>
+          {/* Final Result Row */}
           <tr>
             <td style={{ width: "70px", border: "1px solid black" }}>
             </td>
@@ -182,23 +192,25 @@ const cumulativeFinalResult = totalResult.reduce((acc, result) => acc + result, 
               </td>
             ))}
           </tr>
+          {/* Cumulative Final Result Row */}
           <tr>
             <td style={{ width: "70px", border: "1px solid black" }}>
             </td>
             <td style={{ width: "70px", border: "1px solid black" }}>
               Cumulative Final Result
             </td>
-            {Array(12).fill(0).map((result, index) => (
+            {cumulativeFinalResult.map((result, index) => (
               <td style={{ width: "70px", border: "1px solid black" }} key={index}>
-                {cumulativeFinalResult}
+                {result}
               </td>
             ))}
           </tr>
-          </tbody>
-        </table>
-      </div>
-    );
-  };
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
 
   return (
     <div>{renderTable()}</div>
