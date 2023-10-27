@@ -113,14 +113,18 @@ const handleInputKeyPress = (e, incomeOrExpenseTypeId, month, amount, id) => {
   });
 // Calculate the total reconciliation result by adding reconciliationResult and resultByMonth
 const totalResult = reconciliationResult.map((result, index) => result + resultByMonth[index]);
-
-  const renderTable = () => {
+const cumulativeResult = totalResult.reduce((acc, value, index) => {
+  if (index === 0) {
+    return [value];
+  } else {
+    return [...acc, value + acc[index - 1]];
+  }
+}, []);
+const renderTable = () => {
   if (data.length === 0) {
     return <div>Loading...</div>;
   }
 
-  const cumulativeFinalResult = Array(12).fill(0);
-  
   return (
     <div>
       <table style={{ border: "1px solid black" }}>
@@ -137,35 +141,29 @@ const totalResult = reconciliationResult.map((result, index) => result + resultB
               <td style={{ width: "70px", border: "1px solid black" }}>
                 {item.name}
               </td>
-              {item.months.map((value, index) => {
-                const cumulativeSum = item.type === 1 ? value : -value;
-                cumulativeFinalResult[index] += cumulativeSum;
-                return (
-                  <td style={{ width: "70px", border: "1px solid black" }} key={index}>
-                    <input
-                      type="number"
-                      value={value}
-                      style={{ width: "70px" }}
-                      onChange={(e) => {
-                        // Create a copy of the table data
-                        const updatedTableData = { ...tableData };
-
-                        // Update the value in the copy
-                        updatedTableData[item.id].months[index] = parseFloat(e.target.value);
-
-                        // Update the state with the updated data
-                        setTableData(updatedTableData);
-                      }}
-                      onKeyPress={(e) =>
-                        handleInputKeyPress(e, item.id, index, e.target.value, data.find((itemData) =>
-                          itemData.incomeOrExpenseTypeId === item.id &&
-                          new Date(itemData.yearMonth).getMonth() === index
-                        )?.id || 0)
-                      }
-                    />
-                  </td>
-                );
-              })}
+              {item.months.map((value, index) => (
+                <td style={{ width: "70px", border: "1px solid black" }} key={index}>
+                  <input
+                    type="number"
+                    value={value}
+                    style={{ width: "70px" }}
+                    onChange={(e) => {
+                      // Create a copy of the table data
+                      const updatedTableData = { ...tableData };
+                      // Update the value in the copy
+                      updatedTableData[item.id].months[index] = parseFloat(e.target.value);
+                      // Update the state with the updated data
+                      setTableData(updatedTableData);
+                    }}
+                    onKeyPress={(e) =>
+                      handleInputKeyPress(e, item.id, index, e.target.value, data.find((itemData) =>
+                        itemData.incomeOrExpenseTypeId === item.id &&
+                        new Date(itemData.yearMonth).getMonth() === index
+                      )?.id || 0)
+                    }
+                  />
+                </td>
+              ))}
             </tr>
           ))}
           {/* Reconciliation Result Row */}
@@ -194,14 +192,15 @@ const totalResult = reconciliationResult.map((result, index) => result + resultB
               </td>
             ))}
           </tr>
-          {/* Cumulative Final Result Row */}
-          <tr>
+
+           {/* Cumulative Final Result Row */}
+           <tr>
             <td style={{ width: "70px", border: "1px solid black" }}>
             </td>
             <td style={{ width: "70px", border: "1px solid black" }}>
-              Cumulative Final Result
+            Cumulative Final Result
             </td>
-            {cumulativeFinalResult.map((result, index) => (
+            {cumulativeResult.map((result, index) => (
               <td style={{ width: "70px", border: "1px solid black" }} key={index}>
                 {result}
               </td>
