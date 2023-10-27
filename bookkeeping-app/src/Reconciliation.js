@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 const Reconciliation = ({ resultByMonth }) => {
-  console.log(resultByMonth);
   const [data, setData] = useState([]);
   const [tableData, setTableData] = useState([]);
 
@@ -64,10 +63,10 @@ const Reconciliation = ({ resultByMonth }) => {
     const stringifiedData = stringifyData(updatedData);
   
     // Handle the edited data here
-    console.log("Edited Data (Stringified):", stringifiedData);
+    //console.log("Edited Data (Stringified):", updatedData);
   
     // Assuming you have the axios instance set up, you can send a POST request
-    axios.post("https://localhost:7151/api/Base/CreateBookKeepingData", stringifiedData, {
+    axios.post("https://localhost:7151/api/Base/ModifyBookKeepingData", stringifiedData, {
       headers: {
         "Content-Type": "application/json",
       }
@@ -83,14 +82,14 @@ const Reconciliation = ({ resultByMonth }) => {
   };
   
 
-  const handleInputKeyPress = (e, incomeOrExpenseTypeId, month, value, id) => {
+  const handleInputKeyPress = (e, incomeOrExpenseTypeId, month, amount, id) => {
     if (e.key === "Enter") {
       // Call the handleEdit method with the updated data
       month=month+1;
       handleEdit({
         incomeOrExpenseTypeId,
         month,
-        value,
+        amount,
         id,
       });
     }

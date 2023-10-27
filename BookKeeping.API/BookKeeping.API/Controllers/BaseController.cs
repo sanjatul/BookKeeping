@@ -74,11 +74,48 @@ namespace BookKeeping.API.Controllers
         }
 
         [HttpPost] 
-        [Route("CreateBookKeepingData")]
-        public async Task<IActionResult> CreateBookKeepingData([FromBody] CreateBookKeepingData data)
+        [Route("ModifyBookKeepingData")]
+        public async Task<IActionResult> ModifyBookKeepingData([FromBody]CreateBookKeepingData data)
         {
 
-            return Ok(data);
+            if(data == null) { return NotFound(); }
+            if (data.Id == 0)
+            {
+                //For Creating
+                var bookkeeping = new Bookkeeping
+                {
+                    Id=data.Id,
+                    YearMonth= GenerateDate(data.Month),
+                    Amount =data.Amount,
+                    IncomeOrExpenseTypeId = data.IncomeOrExpenseTypeId,
+
+                };
+                await _context.Bookkeeping.AddAsync(bookkeeping);
+                await _context.SaveChangesAsync();
+                return Ok(bookkeeping);
+            }
+            else
+            {
+                //For Updating
+                var bookeeping =await _context.Bookkeeping.FirstOrDefaultAsync(x=>x.Id==data.Id);
+                if(bookeeping== null) return NotFound();
+                bookeeping.Amount = data.Amount;
+                _context.Bookkeeping.Update(bookeeping);
+                await _context.SaveChangesAsync();
+                return Ok(bookeeping);
+                
+            }
+        }
+        public static DateTime GenerateDate(int month)
+        {
+            // Ensure that the month is within a valid range (1-12)
+            if (month < 1 || month > 12)
+            {
+                throw new ArgumentOutOfRangeException("Month should be between 1 and 12.");
+            }
+
+            // Create a DateTime object with the year set to 2021 and the specified month
+            return new DateTime(2021, month, 1);
         }
     }
 }
