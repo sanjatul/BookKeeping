@@ -57,48 +57,50 @@ const Reconciliation = ({ resultByMonth }) => {
     return data;
   };
   
-  const handleEdit = (updatedData) => {
-    // Convert all values to strings
-    const stringifiedData = stringifyData(updatedData);
-  
-    // Handle the edited data here
-    //console.log("Edited Data (Stringified):", updatedData);
-  
-    // Assuming you have the axios instance set up, you can send a POST request
-    axios.post("https://localhost:7151/api/Base/ModifyBookKeepingData", stringifiedData, {
-      headers: {
-        "Content-Type": "application/json",
-      }
-    })
-      .then((response) => {
-        console.log("POST request successful:", response);
-        // You can handle success, update state, or perform other actions here
-      })
-      .catch((error) => {
-        console.error("POST request failed:", error);
-        // Handle errors or display an error message to the user
-      });
-  };
-  
+ const handleEdit = (updatedData) => {
+  // Convert all values to strings
+  const stringifiedData = stringifyData(updatedData);
 
-  const handleInputKeyPress = (e, incomeOrExpenseTypeId, month, amount, id) => {
+  axios.post("https://localhost:7151/api/Base/ModifyBookKeepingData", stringifiedData, {
+    headers: {
+      "Content-Type": "application/json",
+    }
+  })
+    .then((response) => {
+      console.log("POST request successful:", response);
+      alert("Data updated"); 
+    })
+    .catch((error) => {
+      console.error("POST request failed:", error);
+      alert("Modifications were not saved"); 
+    });
+};
+  
+const handleInputKeyPress = (e, incomeOrExpenseTypeId, month, amount, id) => {
   if (e.key === "Enter") {
     // Check if the input value is not empty
     if (amount.trim() !== "") {
-      // Call the handleEdit method with the updated data
-      month = month + 1;
-      handleEdit({
-        incomeOrExpenseTypeId,
-        month,
-        amount,
-        id,
-      });
+      // Check if the amount is a valid number
+      if (!isNaN(parseFloat(amount))) {
+        // Call the handleEdit method with the updated data
+        month = month + 1;
+        handleEdit({
+          incomeOrExpenseTypeId,
+          month,
+          amount,
+          id,
+        });
+      } else {
+        console.log("Input is not a valid number. Please enter a valid number.");
+        alert("Input is not a valid number. Please enter a valid number.");
+      }
     } else {
-      // Optionally, you can provide feedback to the user that the input is empty.
       console.log("Input field is empty. Please enter a valid value.");
+      alert("Input field is empty. Please enter a valid value.");
     }
   }
 };
+
 
 
   // Calculate the sum of income and expenses for each month
