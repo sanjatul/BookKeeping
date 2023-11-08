@@ -116,7 +116,7 @@ const totalResult = reconciliationResult.map((result, index) => result + resultB
 const cumulativeResult = totalResult.reduce((acc, value, index) => {
   if (index === 0) {
     return [value];
-  } else {
+  } else { 
     return [...acc, value + acc[index - 1]];
   }
 }, []);
